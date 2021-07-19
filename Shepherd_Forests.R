@@ -5,9 +5,12 @@ library(randomForest)
 data("ResumeNames")
 
 
-set.seed(100)
+set.seed(1111)
 rforest <- randomForest(call~. -name,data=ResumeNames,ntree=100,maxnodes=15)
 par(mfrow=c(1,1))
 plot(rforest)
 
 varImpPlot(rforest)
+
+
+
