@@ -168,3 +168,63 @@ text(prune.resume, pretty = 0)
 #Random Forest
 library(randomForest)
 rf.resume = randomForest(call~., data=rand_whole, subset=train, mtry = 3, importance=TRUE)
+
+# Linear Regression
+library(AER)
+library(car)
+data(ResumeNames)
+
+lm.fit = lm(call~., data=resume)
+summary(lm.fit)
+vif(lm.fit)
+
+lm.fit1 = lm(call~.-email, data=resume)
+summary(lm.fit1)
+vif(lm.fit1)
+
+lm.fit2 = lm(call~.-(email+minimum), data=resume)
+summary(lm.fit2)
+vif(lm.fit2)
+
+lm.fit3 = lm(call~.-(email+minimum+reqexp), data=resume)
+summary(lm.fit3)
+vif(lm.fit3)
+
+lm.fit4 = lm(call~.-(email+minimum+reqexp+military), data=resume)
+summary(lm.fit4)
+vif(lm.fit4)
+
+lm.fit5 = lm(call~.-(email+minimum+reqexp+military+reqcomp), data=resume)
+summary(lm.fit5)
+vif(lm.fit5)
+
+lm.fit6 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender), data=resume)
+summary(lm.fit7)
+vif(lm.fit7)
+
+
+lm.fit7 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender+computer), data=resume)
+summary(lm.fit7)
+vif(lm.fit7)
+
+
+lm.fit8 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender+college+computer), data=resume)
+summary(lm.fit8)
+vif(lm.fit8)
+
+
+lm.fit9 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender+college+reqcomm+computer), data=resume)
+summary(lm.fit9)
+vif(lm.fit9)
+
+lm.fit10 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender+college+reqcomm+computer+school), data=resume)
+summary(lm.fit10)
+vif(lm.fit10)
+
+lm.fit11 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer+gender+college+reqcomm+computer+school+reqorg), data=resume)
+summary(lm.fit11)
+vif(lm.fit11)
+
+lm.fit6 = lm(call~.-(email+minimum+reqexp+military+reqcomp+volunteer), data=resume)
+summary(lm.fit6)
+vif(lm.fit6)
