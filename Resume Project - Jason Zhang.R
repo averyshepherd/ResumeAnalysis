@@ -1,7 +1,9 @@
+# Read in the dataset
 rm(list = ls())
 library(AER)
 data("ResumeNames")
 
+# Take a look at the data set
 dim(ResumeNames)
 summary(ResumeNames)
 
@@ -30,15 +32,32 @@ reqcomm = ifelse(ResumeNames$reqcomm=='yes', 1, 0)
 reqeduc = ifelse(ResumeNames$reqeduc=='yes', 1, 0)
 reqcomp = ifelse(ResumeNames$reqcomp=='yes', 1, 0)
 reqorg = ifelse(ResumeNames$reqorg=='yes', 1, 0)
-minimum = as.numeric(ResumeNames$minimum) 
-resume = data.frame(ResumeNames$jobs, ResumeNames$experience, gender, ethnicity, quality, call, city, honors, volunteer, military, holes, school, email,computer, special,college, equal, req,reqcomm,reqcomp,reqeduc,reqexp,reqorg,minimum)
+
+# Scale the variables by normalization
+minimum = scale(as.numeric(ResumeNames$minimum)) * sd(call)
+experience = scale(ResumeNames$experience)*sd(call)
+jobs = scale(ResumeNames$jobs)*sd(call)
+
+# Attach all the variables to a new data frame
+resume = data.frame(jobs, experience, gender, ethnicity, quality, call, city, honors, volunteer, military, holes, school, email,computer, special,college, equal, req,reqcomm,reqcomp,reqeduc,reqexp,reqorg,minimum)
 attach(resume)
 
 
+# Since the dataset is very biased on the no side, so we pick out the yes and randomly choose the same length of no to create a new dataset.
+set.seed(142)
+no = subset(resume, call == 0)
+yes_set = subset(resume, call ==1)
+no_sample = sample(1:dim(no)[1], dim(yes_set)[1])
+no_set = no[no_sample,]
+whole = rbind(no_set, yes_set)
+row = sample(nrow(whole))
+rand_whole = whole[row,]
+attach(rand_whole)
+
 
 # K-fold validation - gender & ethnicity
-train = data.frame(call,gender,ethnicity)
-test = data.frame(call,gender, ethnicity)
+train = data.frame(call,gender,ethnicity, school, college, equal, experience, job)
+test = data.frame(call,gender,ethnicity, school, college, equal, experience, job)
 
 kcv = 10
 n0 = round(n/kcv,0)
@@ -128,12 +147,24 @@ best
 
 
 
+#Tree Method
+library(tree)
+tree.resume = tree(call~.,rand_whole)
+summary(tree.resume)
+plot(tree.resume)
+text(tree.resume, pretty=0)
 
+#Regression Tree
+train = sample(1:nrow(rand_whole), nrow(rand_whole)/2)
+tree.resume = tree(call~., data=rand_whole, subset =train)
+summary(tree.resume)
+cv.resume = cv.tree(tree.resume)
+plot(cv.resume$size, cv.resume$dev, type='b')
 
+prune.resume = prune.tree(tree.resume, best =2)
+plot(prune.resume)
+text(prune.resume, pretty = 0)
 
 #Random Forest
-library(tree)
-tree.ResumeNames = tree(call~.-name,ResumeNames)
-summary(tree.ResumeNames)
-plot(tree.ResumeNames)
-text(tree.ResumeNames, pretty=0)
+library(randomForest)
+rf.resume = randomForest(call~., data=rand_whole, subset=train, mtry = 3, importance=TRUE)
