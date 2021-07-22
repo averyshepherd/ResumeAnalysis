@@ -51,21 +51,39 @@ down_train <- downSample(x = train.all[, -ncol(train.all)],
 down_test <- downSample(x = test.all[, -ncol(test.all)],
                          y = test.all$call)
 
+## Downtrain
+kk = c(1,3,7,9,10,15,20, 50, 99)
+error_vec = vector('numeric',0)
+for (i in kk) {
+  knn.pred = knn(down_train, down_test, down_train$call, k=i)
+  a = table(knn.pred, down_test$call)
+  error = (a[1,2]+a[2,1])/sum(a)
+  error_vec = c(error_vec, error)
+}
 
-knn.pred = knn(down_train, down_test, down_train$call, k=1)
-table(knn.pred, down_test$call)
+plot(x=kk, y=error_vec)
 
-knn.pred = knn(down_train, down_test, down_train$call, k=3)
-table(knn.pred, down_test$call)
 
+## Uptrain
 up_train <- upSample(x = train.all[,-ncol(train.all)],
                      y = train.all$call)
 
 up_test <- upSample(x = test.all[,-ncol(test.all)],
-                     y = test.all$call)
+                    y = test.all$call)
 
-knn.pred = knn(up_train, up_test, up_train$call, k=3)
-table(knn.pred, up_test$call)
+kk = c(1,3,7,9,10,15,20, 50, 99)
+error_vec = vector('numeric',0)
+for (i in kk) {
+  
+  knn.pred = knn(up_train, up_test, up_train$call, k=i)
+  a = table(knn.pred, up_test$call)
+  error = (a[1,2]+a[2,1])/sum(a)
+  error_vec = c(error_vec, error)
+}
+
+plot(x=kk, y=error_vec)
+
+
 
 
 # Only the input of applicant
@@ -76,6 +94,7 @@ train <-  sample(1:nrow(resume_applicant),nrow(resume_applicant)/2)
 train.all <- resume_applicant[train,]
 test.all <- resume_applicant[-train,]
 
+#Downtrain
 down_train <- downSample(x = train.all[, -ncol(train.all)],
                          y = train.all$call)
 
@@ -83,17 +102,34 @@ down_test <- downSample(x = test.all[, -ncol(test.all)],
                         y = test.all$call)
 
 
-knn.pred = knn(down_train, down_test, down_train$call, k=1)
-table(knn.pred, down_test$call)
+kk = c(1,3,7,9,10,15,20, 50, 99)
+error_vec = vector('numeric',0)
+for (i in kk) {
+  knn.pred = knn(down_train, down_test, down_train$call, k=i)
+  a = table(knn.pred, down_test$call)
+  error = (a[1,2]+a[2,1])/sum(a)
+  error_vec = c(error_vec, error)
+}
 
-knn.pred = knn(down_train, down_test, down_train$call, k=3)
-table(knn.pred, down_test$call)
+plot(x=kk, y=error_vec)
 
+
+
+#Uptrain
 up_train <- upSample(x = train.all[,-ncol(train.all)],
                      y = train.all$call)
 
 up_test <- upSample(x = test.all[,-ncol(test.all)],
                     y = test.all$call)
 
-knn.pred = knn(up_train, up_test, up_train$call, k=3)
-table(knn.pred, up_test$call)
+kk = c(1,3,7,9,10,15,20, 50, 99)
+error_vec = vector('numeric',0)
+for (i in kk) {
+  
+  knn.pred = knn(up_train, up_test, up_train$call, k=i)
+  a = table(knn.pred, up_test$call)
+  error = (a[1,2]+a[2,1])/sum(a)
+  error_vec = c(error_vec, error)
+}
+
+plot(x=kk, y=error_vec)
