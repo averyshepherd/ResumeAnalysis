@@ -90,7 +90,7 @@ boost.resume=gbm(call~.-name,data=up_train, distribution="gaussian",
 summary(boost.resume)
 
 # predict call on test set
-yhat.boost=predict(boost.resume, newdata =ResumeNames[-train,],
+yhat.boost=predict(boost.resume, newdata = ResumeNames[-train,],
                    n.trees=5000)
 mean((yhat.boost - as.numeric(ResumeNames[-train,"call"]))^2)
 
