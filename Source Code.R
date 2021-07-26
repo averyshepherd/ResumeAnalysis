@@ -1,3 +1,8 @@
+library(randomForest)
+library(caret)
+attach(ResumeNames)
+
+
 ### Random Forests
 
 train <-  sample(1:nrow(ResumeNames),nrow(ResumeNames)/2)
@@ -25,7 +30,7 @@ varImpPlot(rf.ResumeNamesDown)
 
 ## Up Train
 
-up_train <- upSample(x = train.all[],
+up_train <- upSample(x = train.all,
                      y = train.all$call)
 up_train <- up_train[,c(1:27)]
 
@@ -39,3 +44,21 @@ mean((yhat.rf == test.all$call)^2)
 
 importance(rf.ResumeNamesUp)
 varImpPlot(rf.ResumeNamesUp)
+
+## Up train with Applicant facing data
+
+rf.ResumeNamesUpApp <- randomForest(call~gender+ethnicity+quality+city+jobs+
+                                      experience+honors+volunteer+military+holes+
+                                      school+email+computer+special+college,data = up_train,
+                                    mtry = 5, importance = TRUE)
+rf.ResumeNamesUpApp
+
+yhat.rf <- predict(rf.ResumeNamesUpApp, newdata = test.all)
+
+table(yhat.rf, test.all$call)
+
+mean((yhat.rf == test.all$call)^2)
+
+importance(rf.ResumeNamesUpApp)
+varImpPlot(rf.ResumeNamesUpApp)
+
