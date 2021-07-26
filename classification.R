@@ -7,7 +7,7 @@ train <-  sample(1:nrow(ResumeNames),nrow(ResumeNames)/2)
 train.all <- ResumeNames[train,]
 test.all <- ResumeNames[-train,]
 
-up_train <- upSample(x = train.all[,-ncol(train.all)],
+up_train <- upSample(x = train.all,
                      y = train.all$call)
 up_train <- up_train[,c(0:26)]
 
